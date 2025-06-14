@@ -1,6 +1,16 @@
 {
   "trailingSlash": "auto",
-  "routes": [],
+  "routes": [
+    {
+      "route": "/",
+      "methods": [
+        "get"
+      ],
+      "allowedRoles": [
+        "anonymous"
+      ]
+    }
+  ],
   "navigationFallback": {
     "rewrite": "index.html"
   },
