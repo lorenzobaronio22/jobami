@@ -2,11 +2,14 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
-  modules: ['nuxt-auth-utils'],
+  modules: [],
   runtimeConfig: {
-    session: {
-      password: process.env.NUXT_SESSION_PASSWORD || '',
-      maxAge: 60 * 60 * 24 * 7 // 1 week
+    public: {
+      supabaseUrl: 'https://your-supabase-url.supabase.co',
+      supabaseAnonKey: 'your-anon-key'
     }
-  }
+  },
+  plugins: [
+    '~/plugins/supabase.client.ts'
+  ]
 })
