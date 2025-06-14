@@ -21,11 +21,11 @@ async function logout() {
 <template>
   <div class="flex items-center gap-3">
     <template v-if="loading">
-      <UIcon name="i-heroicons-user" class="animate-pulse text-gray-400" />
+      <UIcon name="i-heroicons-user" class="animate-pulse" />
       <USkeleton class="h-6 w-24 rounded" />
     </template>
     <template v-else-if="user">
-      <span class="font-medium text-gray-700">{{ displayName }}</span>
+      <span class="font-medium">{{ displayName }}</span>
       <UButton color="primary" variant="soft" @click="logout">Logout</UButton>
     </template>
     <template v-else>
