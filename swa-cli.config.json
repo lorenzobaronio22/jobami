@@ -1,12 +1,13 @@
 {
   "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
   "configurations": {
-    "src": {
+    "jobami": {
       "appLocation": ".",
-      "outputLocation": ".output/public",
+      "outputLocation": ".output",
       "appBuildCommand": "npm run build",
       "run": "npm run dev",
-      "appDevserverUrl": "http://localhost:3000"
+      "appDevserverUrl": "http://localhost:3000",
+      "configFileLocation": "staticwebapp.config.json"
     }
   }
 }
