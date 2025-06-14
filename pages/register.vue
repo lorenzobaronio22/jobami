@@ -39,12 +39,14 @@ async function onRegister() {
         </template>
         <template v-else>
           <UForm @submit.prevent="onRegister" :state="form" class="flex flex-col gap-2">
-            <UFormGroup label="Email" name="email">
-              <UInput v-model="form.email" type="email" required autocomplete="email" class="w-full" placeholder="Enter your email address" />
-            </UFormGroup>
-            <UFormGroup label="Password" name="password">
-              <UInput v-model="form.password" type="password" required autocomplete="new-password" class="w-full" placeholder="Create a password" />
-            </UFormGroup>
+            <div class="flex flex-col gap-1 mb-2">
+              <label for="register-email" class="font-medium mb-1">Email</label>
+              <UInput id="register-email" v-model="form.email" type="email" required autocomplete="email" class="w-full" placeholder="Enter your email address" />
+            </div>
+            <div class="flex flex-col gap-1 mb-2">
+              <label for="register-password" class="font-medium mb-1">Password</label>
+              <UInput id="register-password" v-model="form.password" type="password" required autocomplete="new-password" class="w-full" placeholder="Create a password" />
+            </div>
             <div class="h-6"></div>
             <UButton type="submit" color="primary" :loading="loading" block class="mt-2">Sign Up</UButton>
             <UAlert v-if="error" color="error" variant="soft" class="mt-4">{{ error }}</UAlert>

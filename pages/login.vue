@@ -32,12 +32,14 @@ async function onLogin() {
     <div class="flex justify-center">
       <div class="w-full max-w-md">
         <UForm @submit.prevent="onLogin" :state="form" class="flex flex-col gap-2">
-          <UFormGroup label="Email" name="email">
-            <UInput v-model="form.email" type="email" required autocomplete="email" class="w-full" placeholder="Enter your email" />
-          </UFormGroup>
-          <UFormGroup label="Password" name="password">
-            <UInput v-model="form.password" type="password" required autocomplete="current-password" class="w-full" placeholder="Enter your password" />
-          </UFormGroup>
+          <div class="flex flex-col gap-1 mb-2">
+            <label for="login-email" class="font-medium mb-1">Email</label>
+            <UInput id="login-email" v-model="form.email" type="email" required autocomplete="email" class="w-full" placeholder="Enter your email" />
+          </div>
+          <div class="flex flex-col gap-1 mb-2">
+            <label for="login-password" class="font-medium mb-1">Password</label>
+            <UInput id="login-password" v-model="form.password" type="password" required autocomplete="current-password" class="w-full" placeholder="Enter your password" />
+          </div>
           <div class="h-6"></div>
           <UButton type="submit" color="primary" :loading="loading" block class="mt-2">Sign In</UButton>
           <UAlert v-if="error" color="error" variant="soft" class="mt-4">{{ error }}</UAlert>
