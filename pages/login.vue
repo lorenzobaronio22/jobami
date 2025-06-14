@@ -1,31 +1,52 @@
-<template>
-  <div class="auth-form">
-    <h2>Login</h2>
-    <form @submit.prevent="login">
-      <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      <p v-if="error" class="error">{{ error }}</p>
-    </form>
-  </div>
-</template>
 <script setup lang="ts">
-const email = ref('')
-const password = ref('')
-const error = ref('')
-const supabase = useNuxtApp().$supabase as import('@supabase/supabase-js').SupabaseClient
-const router = useRouter()
 
-async function login() {
+definePageMeta({ layout: 'auth' })
+
+const router = useRouter()
+const nuxtApp = useNuxtApp()
+const form = ref({ email: '', password: '' })
+const loading = ref(false)
+const error = ref('')
+
+async function onLogin() {
+  loading.value = true
   error.value = ''
-  const { error: err } = await supabase.auth.signInWithPassword({ email: email.value, password: password.value })
-  if (err) {
-    error.value = err.message
+  const { error: loginError } = await nuxtApp.$supabase.auth.signInWithPassword({
+    email: form.value.email,
+    password: form.value.password
+  })
+  loading.value = false
+  if (loginError) {
+    error.value = loginError.message
   } else {
     router.push('/')
   }
 }
 </script>
+
+<template>
+  <UCard>
+    <template #header>
+      <h2 class="text-xl font-bold mb-2 text-center">Sign In</h2>
+    </template>
+    <div class="flex justify-center">
+      <div class="w-full max-w-md">
+        <UForm @submit.prevent="onLogin" :state="form" class="flex flex-col gap-2">
+          <UFormGroup label="Email" name="email">
+            <UInput v-model="form.email" type="email" required autocomplete="email" class="w-full" placeholder="Enter your email" />
+          </UFormGroup>
+          <UFormGroup label="Password" name="password">
+            <UInput v-model="form.password" type="password" required autocomplete="current-password" class="w-full" placeholder="Enter your password" />
+          </UFormGroup>
+          <div class="h-6"></div>
+          <UButton type="submit" color="primary" :loading="loading" block class="mt-2">Sign In</UButton>
+          <UAlert v-if="error" color="error" variant="soft" class="mt-4">{{ error }}</UAlert>
+        </UForm>
+      </div>
+    </div>
+  </UCard>
+</template>
+
 <style scoped>
 .auth-form { max-width: 400px; margin: 2rem auto; }
 .error { color: red; }
