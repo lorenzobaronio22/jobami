@@ -1,6 +1,11 @@
 {
   "trailingSlash": "auto",
-  "routes": [],
+  "routes": [
+    {
+      "route": "/index.html",
+      "redirect": "/"
+    }
+  ],
   "navigationFallback": {
     "rewrite": "index.html"
   },
