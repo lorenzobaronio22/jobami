@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSupabaseUser } from '@/composables/useSupabaseUser'
+import { useRouter } from 'vue-router'
 
 const { user, loading } = useSupabaseUser()
+const router = useRouter()
 
 const displayName = computed(() => {
   if (user.value) {
@@ -12,7 +14,8 @@ const displayName = computed(() => {
 })
 
 function handleReviewExperiences() {
-  console.log('Review Experiences clicked')
+  // Navigate to the review experiences page
+  router.push('/review-experiences')
 }
 </script>
 
