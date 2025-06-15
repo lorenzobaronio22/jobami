@@ -7,7 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "swa:start": "npx swa start",
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop",
+    "supabase:status": "npx supabase status",
+    "supabase:login": "npx supabase login",
+    "supabase:link": "npx supabase link"
   },
   "dependencies": {
     "@nuxt/ui": "^3.1.3",
@@ -17,6 +23,7 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@azure/static-web-apps-cli": "^2.0.6"
+    "@azure/static-web-apps-cli": "^2.0.6",
+    "supabase": "^2.24.3"
   }
 }
