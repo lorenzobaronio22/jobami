@@ -27,7 +27,7 @@ jobs:
     - name: Start Supabase
       run: npm run supabase:start
     - name: Run Tests
-      run: npm run supabase:start
+      run: npm run supabase:test:run
 
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
