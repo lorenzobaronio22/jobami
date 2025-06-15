@@ -17,12 +17,17 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-    - name: Supabase CLI Action
-      uses: supabase/setup-cli@v1.5.0
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4.4.0
+      with:
+        node-version: '22'
+        cache: 'npm'
+    - name: Install Dependencies
+      run: npm ci
     - name: Start Supabase
-      run: supabase start
+      run: npm run supabase:start
     - name: Run Tests
-      run: supabase test db
+      run: npm run supabase:start
 
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
