@@ -1,0 +1,44 @@
+BEGIN;
+
+CREATE extension IF NOT EXISTS pgtap WITH SCHEMA extensions;
+
+-- Declare how many tests we plan to run
+SELECT plan(3);
+
+-- Setup our testing data
+-- Set up auth.users entries
+insert into auth.users (id, email) values
+	('123e4567-e89b-12d3-a456-426614174000', 'user1@test.com'),
+	('987fcdeb-51a2-43d7-9012-345678901234', 'user2@test.com');
+
+-- Create test profiles
+insert into profiles (id, user_id, first_name, last_name, maiden_name, address, birth_date, headline, summary, industry, zip_code, geo_location, twitter_handles, websites, instant_messengers)
+values
+    ('123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174000', 'John', 'Doe', 'Smith', '123 Main St', '1990-01-01', 'Software Engineer', 'Experienced in web development', 'Technology', '12345', '{"40.7128,-74.0060"}', '{"@johndoe"}', '{"https://johndoe.com"}', '{"john_doe"}'),
+    ('987fcdeb-51a2-43d7-9012-345678901235', '987fcdeb-51a2-43d7-9012-345678901234', 'Jane', 'Smith', NULL, '456 Elm St', '1985-05-05', 'Data Scientist', 'Passionate about data analysis', 'Data Science', '67890', '{"34.0522,-118.2437"}', '{"@janesmith"}', '{"https://janesmith.com"}', NULL);
+
+-- as User 1
+set local role authenticated;
+set local request.jwt.claim.sub = '123e4567-e89b-12d3-a456-426614174000';
+
+-- Test 1: User 1 should only see their own todos
+select results_eq(
+	'select count(*) from profiles',
+	ARRAY[1::bigint],
+	'User 1 should only see their 1 profile'
+);
+
+-- Test 2: User 1 can update their own profile
+select isnt_empty(
+    $$ update profiles set maiden_name = 'Junior' where id = '123e4567-e89b-12d3-a456-426614174001'::uuid returning id $$,
+    'User 1 can update their own profile'
+);
+
+-- Test 3: User 1 can't update another user's profile
+select is_empty(
+	$$ update profiles set maiden_name = 'Junior' where id = '987fcdeb-51a2-43d7-9012-345678901235'::uuid returning id $$,
+	'User 1 cannot update another user''s profile'
+);
+
+SELECT * FROM finish();
+ROLLBACK;
