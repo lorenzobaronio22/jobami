@@ -5,16 +5,18 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, closed]
     branches:
       - main
 
 permissions:
   contents: read
 
+env:
+  NODE_VERSION: '22'
+
 jobs:
   test_db_job:
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: Test Database Job
     steps:
@@ -23,39 +25,58 @@ jobs:
     - name: Setup Node.js environment
       uses: actions/setup-node@v4.4.0
       with:
-        node-version: '22'
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
     - name: Install Dependencies
-      run: npm ci
+      run: |
+        npm ci
     - name: Start Supabase
-      run: npm run supabase:start
+      run: |
+        npm run supabase:start
+    - name: Verify generated types are checked in
+      run: |
+        npm run supabase:gen:types
+        if ! git diff --ignore-space-at-eol --exit-code --quiet types/gen.ts; then
+          echo "Detected uncommitted changes after build. See status below:"
+          git diff
+          exit 1
+        fi
     - name: Run Tests
-      run: npm run supabase:test:run
+      run: |
+        npm run supabase:test:db
 
-  build_and_deploy_preprod_job:
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+  deploy_db_job:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    needs:
-    - test_db_job
+    name: Deploy Database Job
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.PRODUCTION_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.PRODUCTION_PROJECT_ID }}
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-    - name: Build And Deploy
-      id: builddeploy
-      uses: Azure/static-web-apps-deploy@v1
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4.4.0
       with:
-        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ICY_WAVE_0B7EE0603 }}
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        action: "upload"
-        app_location: "/"
-        api_location: ".output/server"
-        output_location: ".output/public"
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    - name: Install Dependencies
+      run: |
+        npm ci
+    - name: Link to Supabase project
+      run: |
+        npm run supabase:link ${{ secrets.PRODUCTION_PROJECT_ID }}
+    - name: Push Database Changes
+      run: |
+        npm run supabase:db:push
 
   build_and_deploy_prod_job:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    needs:
+    - deploy_db_job
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -69,16 +90,3 @@ jobs:
         app_location: "/"
         api_location: ".output/server"
         output_location: ".output/public"
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-    - name: Close Pull Request
-      id: closepullrequest
-      uses: Azure/static-web-apps-deploy@v1
-      with:
-        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ICY_WAVE_0B7EE0603 }}
-        action: "close"
-        app_location: "/"
