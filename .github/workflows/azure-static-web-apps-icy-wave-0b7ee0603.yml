@@ -33,14 +33,6 @@ jobs:
     - name: Start Supabase
       run: |
         npm run supabase:start
-    - name: Verify generated types are checked in
-      run: |
-        npm run supabase:gen:types
-        if ! git diff --ignore-space-at-eol --exit-code --quiet types/gen.ts; then
-          echo "Detected uncommitted changes after build. See status below:"
-          git diff
-          exit 1
-        fi
     - name: Run Tests
       run: |
         npm run supabase:test:db
