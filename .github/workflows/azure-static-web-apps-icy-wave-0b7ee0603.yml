@@ -42,8 +42,6 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: Test E2E Job
-    needs:
-    - test_db_job
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
