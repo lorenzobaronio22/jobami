@@ -13,6 +13,7 @@ permissions:
 
 env:
   NODE_VERSION: '22'
+  PLAYWRIGHT_VERSION: 'UNDEFINED' # This will be set dynamically in the workflow
 
 jobs:
   test_db_job:
@@ -36,6 +37,44 @@ jobs:
     - name: Run Tests
       run: |
         npm run supabase:test:db
+  
+  test_e2e_job:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Test E2E Job
+    needs:
+    - test_db_job
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4.4.0
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    - name: Get installed Playwright version
+      run: |
+        PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")
+        echo "Playwright version: $PLAYWRIGHT_VERSION"
+        echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
+        echo "Playwright version: ${{ env.PLAYWRIGHT_VERSION }}"
+    - name: Cache playwright binaries
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: |
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+    - name: Install Dependencies
+      run: |
+        npm ci
+    - name: Install playwright deps
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        npx playwright install --with-deps --only-shell chromium
+    - name: Run E2E Tests
+      run: |
+        npm run test:e2e
 
   deploy_db_job:
     if: github.event_name == 'push'
