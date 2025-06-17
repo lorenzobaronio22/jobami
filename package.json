@@ -32,6 +32,6 @@
   "devDependencies": {
     "@azure/static-web-apps-cli": "^2.0.6",
     "@playwright/test": "^1.53.0",
-    "supabase": "^2.24.3"
+    "supabase": "^2.26.9"
   }
 }
