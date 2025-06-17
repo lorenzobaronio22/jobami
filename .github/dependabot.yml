@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "21:00"
+    groups:
+      development:
+        dependency-type: "development"
+      nuxt-vue:
+        patterns:
+        - "nuxt"
+        - "vue"
+        - "vue-router"
+      everything-else:
+        patterns: [ "*" ]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "21:00"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
