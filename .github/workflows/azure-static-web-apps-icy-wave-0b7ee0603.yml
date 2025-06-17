@@ -52,13 +52,13 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
-    - name: Get installed Playwright version
+    - name: Get Installed Playwright Version
       run: |
         PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")
         echo "Playwright version: $PLAYWRIGHT_VERSION"
         echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
         echo "Playwright version: ${{ env.PLAYWRIGHT_VERSION }}"
-    - name: Cache playwright binaries
+    - name: Cache Playwright Binaries
       uses: actions/cache@v4
       id: playwright-cache
       with:
@@ -68,13 +68,13 @@ jobs:
     - name: Install Dependencies
       run: |
         npm ci
-    - name: Install playwright deps
+    - name: Install Playwright dependencies
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: |
-        npx playwright install --with-deps --only-shell chromium
-    - name: Run E2E Tests
+        npm run playwright:install
+    - name: Run Playwright Tests
       run: |
-        npm run test:e2e
+        npm run playwright:test
 
   deploy_db_job:
     if: github.event_name == 'push'

@@ -18,7 +18,9 @@
     "supabase:db:reset": "npx supabase db reset",
     "supabase:db:push": "npx supabase db push",
     "supabase:gen:types": "npx supabase gen types typescript --local > types/gen.ts",
-    "supabase:link": "npx supabase link --project-ref"
+    "supabase:link": "npx supabase link --project-ref",
+    "playwright:install": "npx playwright install --with-deps --only-shell chromium",
+    "playwright:test": "npx playwright test"
   },
   "dependencies": {
     "@nuxt/ui": "^3.1.3",
