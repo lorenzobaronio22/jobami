@@ -18,22 +18,16 @@ export class HomePage {
     await this.page.goto("/");
   }
 
-  async evaluate<T>(fn: () => T): Promise<T> {
-    return this.page.evaluate(fn);
+  async signIn() {
+    await this.loginButton.click();
   }
 
-  async resgiterButtonHref(): Promise<string | null> {
-    return this.evaluate(() => {
-      const link = document.querySelector(`a[data-testid="btn-register"]`);
-      return link ? link.getAttribute('href') : null;
-    });
+  async signUp() {
+    await this.registerButton.click();
   }
 
-  async callToActionButtonHref(): Promise<string | null> {
-    return this.evaluate(() => {
-      const link = document.querySelector(`a[data-testid="btn-call-to-action"]`);
-      return link ? link.getAttribute('href') : null;
-    });
+  async callToAction() {
+    await this.callToActionButton.click();
   }
 
 }
