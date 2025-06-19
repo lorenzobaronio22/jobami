@@ -1,8 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 import { isCI } from 'std-env'
 
-console.log('Running Playwright tests in CI: ', isCI)
-
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
