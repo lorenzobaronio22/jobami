@@ -26,11 +26,11 @@ async function logout() {
     </template>
     <template v-else-if="user">
       <span class="font-medium">{{ displayName }}</span>
-      <UButton color="primary" variant="soft" @click="logout">Logout</UButton>
+      <UButton data-testid="btn-logout" color="primary" variant="soft" @click="logout">Logout</UButton>
     </template>
     <template v-else>
-      <UButton color="primary" variant="soft" to="/login">Sign In</UButton>
-      <UButton color="primary" variant="outline" to="/register">Sign Up</UButton>
+      <UButton data-testid="btn-login" color="primary" variant="soft" to="/login">Sign In</UButton>
+      <UButton data-testid="btn-register" color="primary" variant="outline" to="/register">Sign Up</UButton>
     </template>
   </div>
 </template>
