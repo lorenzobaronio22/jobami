@@ -8,6 +8,9 @@ const form = ref({ email: '', password: '' })
 const loading = ref(false)
 const error = ref('')
 
+const allowUserInput = ref(false)
+onNuxtReady(() => { allowUserInput.value = true })
+
 async function onLogin() {
   loading.value = true
   error.value = ''
@@ -34,14 +37,14 @@ async function onLogin() {
         <UForm @submit.prevent="onLogin" :state="form" class="flex flex-col gap-2">
           <div class="flex flex-col gap-1 mb-2">
             <label for="login-email" class="font-medium mb-1">Email</label>
-            <UInput id="login-email" v-model="form.email" type="email" required autocomplete="email" class="w-full" placeholder="Enter your email" />
+            <UInput :disabled="!allowUserInput" id="login-email" v-model="form.email" type="email" required autocomplete="email" class="w-full" placeholder="Enter your email" />
           </div>
           <div class="flex flex-col gap-1 mb-2">
             <label for="login-password" class="font-medium mb-1">Password</label>
-            <UInput id="login-password" v-model="form.password" type="password" required autocomplete="current-password" class="w-full" placeholder="Enter your password" />
+            <UInput :disabled="!allowUserInput" id="login-password" v-model="form.password" type="password" required autocomplete="current-password" class="w-full" placeholder="Enter your password" />
           </div>
           <div class="h-6"></div>
-          <UButton type="submit" color="primary" :loading="loading" block class="mt-2">Sign In</UButton>
+          <UButton :disabled="!allowUserInput" type="submit" color="primary" :loading="loading" block class="mt-2">Sign In</UButton>
           <UAlert v-if="error" color="error" variant="soft" class="mt-4">{{ error }}</UAlert>
         </UForm>
       </div>
