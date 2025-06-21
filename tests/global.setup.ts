@@ -1,9 +1,9 @@
 import { test } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js'
-import { USER_1_EMAIL, USER_1_ID, USER_1_PASSWORD } from './global.data';
+import { API_URL, SERVICE_ROLE_KEY, USER_1_EMAIL, USER_1_ID, USER_1_PASSWORD } from './global.data';
 
 test('create new database', async ({ }) => {
-  const adminSupabase = createClient(process.env.API_URL!, process.env.SERVICE_ROLE_KEY!)
+  const adminSupabase = createClient(API_URL, SERVICE_ROLE_KEY)
   await adminSupabase.auth.admin.createUser({
     id: USER_1_ID,
     email: USER_1_EMAIL,
