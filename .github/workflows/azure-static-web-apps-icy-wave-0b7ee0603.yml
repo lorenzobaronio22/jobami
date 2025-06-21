@@ -14,6 +14,8 @@ permissions:
 env:
   NODE_VERSION: '22'
   PLAYWRIGHT_VERSION: 'UNDEFINED' # This will be set dynamically in the workflow
+  API_URL: 'UNDEFINED' # This will be set dynamically in the workflow
+  SERVICE_ROLE_KEY: 'UNDEFINED' # This will be set dynamically in the workflow
 
 jobs:
   test_db_job:
@@ -70,6 +72,12 @@ jobs:
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: |
         npm run playwright:install
+    - name: Start Supabase
+      run: |
+        npm run supabase:start
+    - name: Setup Env Variables
+      run: |
+        npx supabase status -o env >> $GITHUB_ENV
     - name: Run Playwright Tests
       run: |
         npm run playwright:test
