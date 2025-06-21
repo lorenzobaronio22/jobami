@@ -1,5 +1,12 @@
-import { defineConfig, devices } from '@playwright/test'
-import { isCI } from 'std-env'
+import { defineConfig, devices } from '@playwright/test';
+import { isCI } from 'std-env';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
   testDir: './tests',
@@ -33,4 +40,4 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !isCI,
   }
-})
+});
