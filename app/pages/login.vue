@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import { useAllowUserInput } from '~/composables/useAllowUserInput'
 
 definePageMeta({ layout: 'auth' })
 
 const router = useRouter()
 const nuxtApp = useNuxtApp()
+const { allowUserInput } = useAllowUserInput()
 const form = ref({ email: '', password: '' })
 const loading = ref(false)
 const error = ref('')
 
-const allowUserInput = ref(false)
-onNuxtReady(() => { allowUserInput.value = true })
 
 async function onLogin() {
   loading.value = true
