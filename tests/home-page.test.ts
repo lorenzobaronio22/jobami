@@ -17,7 +17,7 @@ test.describe('Unauthenticated Home Page', () => {
     await expect(homePage.page).toHaveURL('/register');
   });
 
-  test('should call to actio user to register', async ({ homePage }) => {
+  test('should call users to action to register', async ({ homePage }) => {
     homePage.callToAction();
     await expect(homePage.page).toHaveURL('/register');
   });
