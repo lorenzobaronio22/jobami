@@ -39,7 +39,9 @@ jobs:
         npm run supabase:test:db
 
   deploy_db_job:
-    if: github.event_name == 'push'
+    if: github.event_name == 'pull_request'
+    needs:
+    - test_db_job
     runs-on: ubuntu-latest
     name: Deploy Database Job
     env:
@@ -116,8 +118,6 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
-    needs:
-    - deploy_db_job
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
