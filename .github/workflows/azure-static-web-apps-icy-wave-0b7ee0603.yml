@@ -37,45 +37,11 @@ jobs:
     - name: Run Tests
       run: |
         npm run supabase:test:db
-  
-  test_e2e_job:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    name: Test E2E Job
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v4.4.0
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-    - name: Get Installed Playwright Version
-      run: |
-        PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")
-        echo "Playwright version: $PLAYWRIGHT_VERSION"
-        echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
-        echo "Playwright version: ${{ env.PLAYWRIGHT_VERSION }}"
-    - name: Cache Playwright Binaries
-      uses: actions/cache@v4
-      id: playwright-cache
-      with:
-        path: |
-          ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-    - name: Install Dependencies
-      run: |
-        npm ci
-    - name: Install Playwright dependencies
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        npm run playwright:install
-    - name: Run Playwright Tests
-      run: |
-        npm run playwright:test
 
   deploy_db_job:
-    if: github.event_name == 'push'
+    if: github.event_name == 'pull_request'
+    needs:
+    - test_db_job
     runs-on: ubuntu-latest
     name: Deploy Database Job
     env:
@@ -100,12 +66,44 @@ jobs:
       run: |
         npm run supabase:db:push
 
+  test_e2e_job:
+    if: github.event_name == 'pull_request'
+    needs:
+    - deploy_db_job
+    runs-on: self-hosted
+    name: Test E2E Job
+    env:
+      API_URL: ${{ secrets.SUPABASE_API_URL }} # This will be set dynamically in the workflow
+      SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }} # This will be set dynamically in the workflow
+    container:
+      image: mcr.microsoft.com/playwright:v1.53.0-noble
+      options: --user 1001
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4.4.0
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    - name: Install Dependencies
+      run: |
+        npm ci
+    - name: Run Playwright Tests
+      run: |
+        npm run playwright:test
+    - name: Upload Playwright Report
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+
   build_and_deploy_prod_job:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
-    needs:
-    - deploy_db_job
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4

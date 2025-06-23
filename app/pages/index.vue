@@ -27,7 +27,7 @@ function handleFileChange(event: Event) {
   const files = (event.target as HTMLInputElement).files
   if (files && files.length > 0) {
     const file = files[0]
-    if (file.type === 'application/zip' || file.name.endsWith('.zip')) {
+    if ((file && file.type === 'application/zip') || (file && file.name.endsWith('.zip'))) {
       console.log('Uploaded ZIP file size:', file.size, 'bytes')
     } else {
       alert('Please upload a ZIP file.')
