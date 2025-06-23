@@ -14,7 +14,7 @@ export default defineConfig({
   forbidOnly: !!isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
-  reporter: process.env.CI ? 'github' : 'list',
+  reporter: isCI ? 'github' : 'list',
   use: {
     trace: 'on-first-retry',
     baseURL: 'http://localhost:3000',
