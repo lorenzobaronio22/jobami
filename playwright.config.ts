@@ -14,7 +14,9 @@ export default defineConfig({
   forbidOnly: !!isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
-  reporter: isCI ? 'github' : 'list',
+  reporter: isCI ? 
+    [['github'], ['html', {open: 'never', outputFolder: 'playwright-report'}]]
+    : 'list',
   use: {
     trace: 'on-first-retry',
     baseURL: 'http://localhost:3000',
