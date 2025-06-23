@@ -14,8 +14,6 @@ permissions:
 env:
   NODE_VERSION: '22'
   PLAYWRIGHT_VERSION: 'UNDEFINED' # This will be set dynamically in the workflow
-  API_URL: 'UNDEFINED' # This will be set dynamically in the workflow
-  SERVICE_ROLE_KEY: 'UNDEFINED' # This will be set dynamically in the workflow
 
 jobs:
   test_db_job:
@@ -44,6 +42,9 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: Test E2E Job
+    env:
+      API_URL: ${{ secrets.SUPABASE_API_URL }} # This will be set dynamically in the workflow
+      SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }} # This will be set dynamically in the workflow
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -72,12 +73,6 @@ jobs:
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: |
         npm run playwright:install
-    - name: Start Supabase
-      run: |
-        npm run supabase:start
-    - name: Setup Env Variables
-      run: |
-        npx supabase status -o env | sed 's/"//g' >> $GITHUB_ENV
     - name: Run Playwright Tests
       run: |
         npm run playwright:test
