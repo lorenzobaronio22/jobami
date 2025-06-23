@@ -23,6 +23,7 @@ export class LoginPage {
     await this.emailInput.fill(USER_1_EMAIL);
     await this.passwordInput.fill(USER_1_PASSWORD);
     await this.submitButton.click();
+    await this.page.waitForURL('/');
   }
 
 }
