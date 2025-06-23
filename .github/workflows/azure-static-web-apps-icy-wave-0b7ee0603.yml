@@ -77,7 +77,7 @@ jobs:
         npm run supabase:start
     - name: Setup Env Variables
       run: |
-        npx supabase status -o env >> $GITHUB_ENV
+        npx supabase status -o env | sed 's/"//g' >> $GITHUB_ENV
     - name: Run Playwright Tests
       run: |
         npm run playwright:test
