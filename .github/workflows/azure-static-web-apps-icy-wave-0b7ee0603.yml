@@ -37,9 +37,37 @@ jobs:
     - name: Run Tests
       run: |
         npm run supabase:test:db
-  
+
+  deploy_db_job:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Deploy Database Job
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.PRODUCTION_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.PRODUCTION_PROJECT_ID }}
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4.4.0
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    - name: Install Dependencies
+      run: |
+        npm ci
+    - name: Link to Supabase project
+      run: |
+        npm run supabase:link ${{ secrets.PRODUCTION_PROJECT_ID }}
+    - name: Push Database Changes
+      run: |
+        npm run supabase:db:push
+
   test_e2e_job:
     if: github.event_name == 'pull_request'
+    needs:
+    - deploy_db_job
     runs-on: ubuntu-latest
     name: Test E2E Job
     env:
@@ -83,32 +111,6 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-
-  deploy_db_job:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    name: Deploy Database Job
-    env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.PRODUCTION_DB_PASSWORD }}
-      SUPABASE_PROJECT_ID: ${{ secrets.PRODUCTION_PROJECT_ID }}
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v4.4.0
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-    - name: Install Dependencies
-      run: |
-        npm ci
-    - name: Link to Supabase project
-      run: |
-        npm run supabase:link ${{ secrets.PRODUCTION_PROJECT_ID }}
-    - name: Push Database Changes
-      run: |
-        npm run supabase:db:push
 
   build_and_deploy_prod_job:
     if: github.event_name == 'push'
