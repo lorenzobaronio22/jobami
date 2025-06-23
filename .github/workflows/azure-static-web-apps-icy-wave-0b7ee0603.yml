@@ -70,7 +70,7 @@ jobs:
     if: github.event_name == 'pull_request'
     needs:
     - deploy_db_job
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: Test E2E Job
     env:
       API_URL: ${{ secrets.SUPABASE_API_URL }} # This will be set dynamically in the workflow
