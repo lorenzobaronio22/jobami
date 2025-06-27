@@ -32,8 +32,8 @@
   "devDependencies": {
     "@azure/static-web-apps-cli": "^2.0.6",
     "@iconify-json/heroicons": "^1.2.2",
-    "@iconify-json/lucide": "^1.2.51",
-    "@playwright/test": "^1.53.0",
+    "@iconify-json/lucide": "^1.2.53",
+    "@playwright/test": "^1.53.1",
     "supabase": "^2.26.9"
   }
 }
